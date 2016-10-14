@@ -36,6 +36,7 @@ import android.view.animation.Animation;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -167,7 +168,7 @@ public class SplashScreen extends CordovaPlugin {
         }else if (action.equals("label")) {
             cordova.getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    webView.postMessage("splashscreen", args[0]);
+                    webView.postMessage("splashscreen", args);
                 }
             });
         } else {
