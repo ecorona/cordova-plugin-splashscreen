@@ -168,7 +168,7 @@ public class SplashScreen extends CordovaPlugin {
         }else if (action.equals("label")) {
             cordova.getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    webView.postMessage("splashscreen", this.args);
+                    webView.postMessage("splashscreen", args.getString(0));
                 }
             });
         } else {
@@ -202,15 +202,15 @@ public class SplashScreen extends CordovaPlugin {
         return null;
     }
 
-    private void updateLabel(String text){
+    private void updateLabel(final String text){
       cordova.getActivity().runOnUiThread(new Runnable() {
           public void run() {
 
             if (existeLabel){
-              pincheLabel.setText(this.text);
+              pincheLabel.setText(text);
             }else{
               pincheLabel = new TextView(webView.getContext());
-              pincheLabel.setText(this.text);
+              pincheLabel.setText(text);
               pincheLabel.setId(555);
               RelativeLayout centeredLayout = new RelativeLayout(cordova.getActivity());
               centeredLayout.setGravity(Gravity.CENTER);
