@@ -206,16 +206,17 @@ public class SplashScreen extends CordovaPlugin {
       cordova.getActivity().runOnUiThread(new Runnable() {
           public void run() {
 
-            if (this.existeLabel){
-              this.pincheLabel.setText(text);
+            if (existeLabel){
+              pincheLabel.setText(text);
             }else{
-              TextView pincheLabel = new TextView(webView.getContext());
+              pincheLabel = new TextView(webView.getContext());
               pincheLabel.setText(text);
               pincheLabel.setId(555);
               RelativeLayout centeredLayout = new RelativeLayout(cordova.getActivity());
               centeredLayout.setGravity(Gravity.CENTER);
               centeredLayout.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
               centeredLayout.addView(pincheLabel);
+              existeLabel = true;
             }
           }
       });
