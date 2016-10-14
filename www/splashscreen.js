@@ -27,6 +27,9 @@ var splashscreen = {
     },
     hide:function() {
         exec(null, null, "SplashScreen", "hide", []);
+    },
+    label:function(text){
+      exec(null, null, "SplashScreen", "label", [text]);
     }
 };
 

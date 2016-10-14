@@ -52,7 +52,6 @@ public class SplashScreen extends CordovaPlugin {
     // Enable functionality only if running on 4.x.x.
     private static final boolean HAS_BUILT_IN_SPLASH_SCREEN = Integer.valueOf(CordovaWebView.CORDOVA_VERSION.split("\\.")[0]) < 4;
     private static final int DEFAULT_SPLASHSCREEN_DURATION = 3000;
-    private static final int DEFAULT_FADE_DURATION = 500;
     private static Dialog splashDialog;
     private static ProgressDialog spinnerDialog;
     private static boolean firstShow = true;
@@ -63,6 +62,8 @@ public class SplashScreen extends CordovaPlugin {
      */
     private ImageView splashImageView;
 
+    private boolean existeLabel = false;
+    private TextView pincheLabel;
     /**
      * Remember last device orientation to detect orientation changes.
      */
@@ -83,13 +84,7 @@ public class SplashScreen extends CordovaPlugin {
             return;
         }
         // Make WebView invisible while loading URL
-        // CB-11326 Ensure we're calling this on UI thread
-        cordova.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getView().setVisibility(View.INVISIBLE);
-            }
-        });
+        getView().setVisibility(View.INVISIBLE);
         int drawableId = preferences.getInteger("SplashDrawableId", 0);
         if (drawableId == 0) {
             String splashResource = preferences.getString("SplashScreen", "screen");
@@ -124,7 +119,7 @@ public class SplashScreen extends CordovaPlugin {
 
     private int getFadeDuration () {
         int fadeSplashScreenDuration = preferences.getBoolean("FadeSplashScreen", true) ?
-            preferences.getInteger("FadeSplashScreenDuration", DEFAULT_FADE_DURATION) : 0;
+            preferences.getInteger("FadeSplashScreenDuration", DEFAULT_SPLASHSCREEN_DURATION) : 0;
 
         if (fadeSplashScreenDuration < 30) {
             // [CB-9750] This value used to be in decimal seconds, so we will assume that if someone specifies 10
@@ -169,6 +164,12 @@ public class SplashScreen extends CordovaPlugin {
                     webView.postMessage("splashscreen", "show");
                 }
             });
+        }else if (action.equals("label")) {
+            cordova.getActivity().runOnUiThread(new Runnable() {
+                public void run() {
+                    webView.postMessage("splashscreen", args[0]);
+                }
+            });
         } else {
             return false;
         }
@@ -185,8 +186,10 @@ public class SplashScreen extends CordovaPlugin {
         if ("splashscreen".equals(id)) {
             if ("hide".equals(data.toString())) {
                 this.removeSplashScreen(false);
-            } else {
+            } else if ("show".equals(data.toString())) {
                 this.showSplashScreen(false);
+            } else {
+              this.updateLabel(data.toString());
             }
         } else if ("spinner".equals(id)) {
             if ("stop".equals(data.toString())) {
@@ -198,6 +201,24 @@ public class SplashScreen extends CordovaPlugin {
         return null;
     }
 
+    private void updateLabel(String text){
+      cordova.getActivity().runOnUiThread(new Runnable() {
+          public void run() {
+
+            if (this.existeLabel){
+              this.pincheLabel.setText(text);
+            }else{
+              TextView pincheLabel = new TextView(webView.getContext());
+              pincheLabel.setText(text);
+              pincheLabel.setId(555);
+              RelativeLayout centeredLayout = new RelativeLayout(cordova.getActivity());
+              centeredLayout.setGravity(Gravity.CENTER);
+              centeredLayout.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+              centeredLayout.addView(pincheLabel);
+            }
+          }
+      });
+    }
     // Don't add @Override so that plugin still compiles on 3.x.x for a while
     public void onConfigurationChanged(Configuration newConfig) {
         if (newConfig.orientation != orientation) {
