@@ -152,7 +152,7 @@ public class SplashScreen extends CordovaPlugin {
     }
 
     @Override
-    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+    public boolean execute(String action, final JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("hide")) {
             cordova.getActivity().runOnUiThread(new Runnable() {
                 public void run() {
@@ -168,7 +168,7 @@ public class SplashScreen extends CordovaPlugin {
         }else if (action.equals("label")) {
             cordova.getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    webView.postMessage("splashscreen", args.getString(0));
+                    webView.postMessage("splashscreen", args);
                 }
             });
         } else {
@@ -205,16 +205,21 @@ public class SplashScreen extends CordovaPlugin {
     private void updateLabel(final String text){
       cordova.getActivity().runOnUiThread(new Runnable() {
           public void run() {
-
             if (existeLabel){
               pincheLabel.setText(text);
             }else{
-              pincheLabel = new TextView(webView.getContext());
-              pincheLabel.setText(text);
-              pincheLabel.setId(555);
+
               RelativeLayout centeredLayout = new RelativeLayout(cordova.getActivity());
               centeredLayout.setGravity(Gravity.CENTER);
               centeredLayout.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+
+              pincheLabel = new TextView(webView.getContext());
+              pincheLabel.setText(text);
+              pincheLabel.setId(5);
+              RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+              layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+              pincheLabel.setLayoutParams(layoutParams);
+
               centeredLayout.addView(pincheLabel);
               existeLabel = true;
             }
