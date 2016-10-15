@@ -65,7 +65,9 @@ public class SplashScreen extends CordovaPlugin {
     private ImageView splashImageView;
 
     private boolean existeLabel = false;
+
     private TextView valueTV;
+    private static ProgressDialog labelDialog;
     /**
      * Remember last device orientation to detect orientation changes.
      */
@@ -214,40 +216,19 @@ public class SplashScreen extends CordovaPlugin {
     private void updateLabel(final String text){
       cordova.getActivity().runOnUiThread(new Runnable() {
           public void run() {
-            /*if (existeLabel){
-              pincheLabel.setText(text);
-            }else{
-
-              RelativeLayout centeredLayout = new RelativeLayout(cordova.getActivity());
-              centeredLayout.setGravity(Gravity.CENTER);
-              centeredLayout.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-
-              pincheLabel = new TextView(webView.getContext());
-              pincheLabel.setText(text);
-              pincheLabel.setText(text);
-              pincheLabel.setId(5);
-              RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-              layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-              pincheLabel.setLayoutParams(layoutParams);
-
-              centeredLayout.addView(pincheLabel);
-              existeLabel = true;
-            }*/
             if (existeLabel){
               valueTV.setText(text);
             }else{
 
-
-
-              spinnerDialog = new ProgressDialog(webView.getContext());
-              spinnerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+              labelDialog = new ProgressDialog(webView.getContext());
+              labelDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 public void onCancel(DialogInterface dialog) {
-                  spinnerDialog = null;
+                  labelDialog = null;
                 }
               });
 
-              spinnerDialog.setCancelable(false);
-              spinnerDialog.setIndeterminate(true);
+              labelDialog.setCancelable(false);
+              labelDialog.setIndeterminate(true);
 
 
               RelativeLayout centeredLayout = new RelativeLayout(cordova.getActivity());
@@ -268,10 +249,10 @@ public class SplashScreen extends CordovaPlugin {
               valueTV.setText(text);
 
               centeredLayout.addView(valueTV);
-              spinnerDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-              spinnerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-              spinnerDialog.show();
-              spinnerDialog.setContentView(centeredLayout);
+              labelDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+              labelDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+              labelDialog.show();
+              labelDialog.setContentView(centeredLayout);
               existeLabel=true;
             }
           }
@@ -295,6 +276,10 @@ public class SplashScreen extends CordovaPlugin {
     private void removeSplashScreen(final boolean forceHideImmediately) {
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
+              if(labelDialog!= null && labelDialog.isShowing()){
+                labelDialog.dismiss();
+                labelDialog = null;
+              }
                 if (splashDialog != null && splashDialog.isShowing()) {
                     final int fadeSplashScreenDuration = getFadeDuration();
                     // CB-10692 If the plugin is being paused/destroyed, skip the fading and hide it immediately
