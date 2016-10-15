@@ -64,7 +64,7 @@ public class SplashScreen extends CordovaPlugin {
     private ImageView splashImageView;
 
     private boolean existeLabel = false;
-    private TextView pincheLabel;
+
     /**
      * Remember last device orientation to detect orientation changes.
      */
@@ -205,7 +205,7 @@ public class SplashScreen extends CordovaPlugin {
     private void updateLabel(final String text){
       cordova.getActivity().runOnUiThread(new Runnable() {
           public void run() {
-            if (existeLabel){
+            /*if (existeLabel){
               pincheLabel.setText(text);
             }else{
 
@@ -222,7 +222,35 @@ public class SplashScreen extends CordovaPlugin {
 
               centeredLayout.addView(pincheLabel);
               existeLabel = true;
-            }
+            }*/
+
+            TextView valueTV = new TextView(webView.getContext());
+
+            spinnerDialog = new ProgressDialog(webView.getContext());
+            spinnerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                public void onCancel(DialogInterface dialog) {
+                    spinnerDialog = null;
+                }
+            });
+
+            spinnerDialog.setCancelable(false);
+            spinnerDialog.setIndeterminate(true);
+
+            RelativeLayout centeredLayout = new RelativeLayout(cordova.getActivity());
+            centeredLayout.setGravity(Gravity.CENTER);
+            centeredLayout.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+
+
+        valueTV.setText(text);
+        valueTV.setId(5);
+
+        centeredLayout.addView(valueTV);
+
+        spinnerDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        spinnerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        spinnerDialog.show();
+        spinnerDialog.setContentView(centeredLayout);
           }
       });
     }
