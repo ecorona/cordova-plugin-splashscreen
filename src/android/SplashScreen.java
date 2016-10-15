@@ -258,7 +258,7 @@ public class SplashScreen extends CordovaPlugin {
               );
 
               tvParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
-              tvParams.setMargins(0, 300, 0, 0);
+              tvParams.setMargins(0, 400, 0, 0);
 
               valueTV = new TextView(webView.getContext());
               valueTV.setTextColor(Color.GRAY);
@@ -286,7 +286,7 @@ public class SplashScreen extends CordovaPlugin {
             if (splashImageView != null) {
                 int drawableId = preferences.getInteger("SplashDrawableId", 0);
                 if (drawableId != 0) {
-                    splashImageView.setImageDrawable(cordova.getActivity().getResources().getDrawable(drawableId));
+                  splashImageView.setImageDrawable(cordova.getActivity().getResources().getDrawable(drawableId));
                 }
             }
         }
