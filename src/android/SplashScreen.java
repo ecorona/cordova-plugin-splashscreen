@@ -45,6 +45,7 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.json.JSONException;
 
 public class SplashScreen extends CordovaPlugin {
@@ -64,7 +65,7 @@ public class SplashScreen extends CordovaPlugin {
     private ImageView splashImageView;
 
     private boolean existeLabel = false;
-
+    private TextView valueTV;
     /**
      * Remember last device orientation to detect orientation changes.
      */
@@ -152,7 +153,7 @@ public class SplashScreen extends CordovaPlugin {
     }
 
     @Override
-    public boolean execute(String action, final JSONArray args, CallbackContext callbackContext) throws JSONException {
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("hide")) {
             cordova.getActivity().runOnUiThread(new Runnable() {
                 public void run() {
@@ -166,9 +167,10 @@ public class SplashScreen extends CordovaPlugin {
                 }
             });
         }else if (action.equals("label")) {
+            final String msg = args.getString(0);
             cordova.getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    webView.postMessage("splashscreen", args);
+                    webView.postMessage("splashscreen", msg);
                 }
             });
         } else {
@@ -201,6 +203,13 @@ public class SplashScreen extends CordovaPlugin {
         }
         return null;
     }
+    /*
+    ██    ██ ██████  ██████   █████  ████████ ███████ ██       █████  ██████  ███████ ██
+    ██    ██ ██   ██ ██   ██ ██   ██    ██    ██      ██      ██   ██ ██   ██ ██      ██
+    ██    ██ ██████  ██   ██ ███████    ██    █████   ██      ███████ ██████  █████   ██
+    ██    ██ ██      ██   ██ ██   ██    ██    ██      ██      ██   ██ ██   ██ ██      ██
+     ██████  ██      ██████  ██   ██    ██    ███████ ███████ ██   ██ ██████  ███████ ███████
+    */
 
     private void updateLabel(final String text){
       cordova.getActivity().runOnUiThread(new Runnable() {
@@ -215,6 +224,7 @@ public class SplashScreen extends CordovaPlugin {
 
               pincheLabel = new TextView(webView.getContext());
               pincheLabel.setText(text);
+              pincheLabel.setText(text);
               pincheLabel.setId(5);
               RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
               layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
@@ -223,34 +233,47 @@ public class SplashScreen extends CordovaPlugin {
               centeredLayout.addView(pincheLabel);
               existeLabel = true;
             }*/
+            if (existeLabel){
+              valueTV.setText(text);
+            }else{
 
-            TextView valueTV = new TextView(webView.getContext());
 
-            spinnerDialog = new ProgressDialog(webView.getContext());
-            spinnerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+
+              spinnerDialog = new ProgressDialog(webView.getContext());
+              spinnerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 public void onCancel(DialogInterface dialog) {
-                    spinnerDialog = null;
+                  spinnerDialog = null;
                 }
-            });
+              });
 
-            spinnerDialog.setCancelable(false);
-            spinnerDialog.setIndeterminate(true);
-
-            RelativeLayout centeredLayout = new RelativeLayout(cordova.getActivity());
-            centeredLayout.setGravity(Gravity.CENTER);
-            centeredLayout.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+              spinnerDialog.setCancelable(false);
+              spinnerDialog.setIndeterminate(true);
 
 
-        valueTV.setText(text);
-        valueTV.setId(5);
+              RelativeLayout centeredLayout = new RelativeLayout(cordova.getActivity());
+              centeredLayout.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
-        centeredLayout.addView(valueTV);
+              RelativeLayout.LayoutParams tvParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
+              );
 
-        spinnerDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        spinnerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+              tvParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+              tvParams.setMargins(0, 300, 0, 0);
 
-        spinnerDialog.show();
-        spinnerDialog.setContentView(centeredLayout);
+              valueTV = new TextView(webView.getContext());
+              valueTV.setTextColor(Color.GRAY);
+              valueTV.setLayoutParams(tvParams);
+              valueTV.setGravity(Gravity.CENTER);
+
+              valueTV.setText(text);
+
+              centeredLayout.addView(valueTV);
+              spinnerDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+              spinnerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+              spinnerDialog.show();
+              spinnerDialog.setContentView(centeredLayout);
+              existeLabel=true;
+            }
           }
       });
     }
